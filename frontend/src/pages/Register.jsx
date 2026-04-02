@@ -1,15 +1,32 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import axiosInstance from '../axiosConfig';
 
 const Register = () => {
-  const [formData, setFormData] = useState({ name: '', email: '', password: '' });
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+  });
+
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async function (e) {
     e.preventDefault();
+
+    if (formData.password !== formData.confirmPassword) {
+      alert('Passwords do not match.');
+      return;
+    }
+
     try {
-      await axiosInstance.post('/api/auth/register', formData);
+      await axiosInstance.post('/api/auth/register', {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+      });
+
       alert('Registration successful. Please log in.');
       navigate('/login');
     } catch (error) {
@@ -18,34 +35,80 @@ const Register = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-20">
-      <form onSubmit={handleSubmit} className="bg-white p-6 shadow-md rounded">
-        <h1 className="text-2xl font-bold mb-4 text-center">Register</h1>
-        <input
-          type="text"
-          placeholder="Name"
-          value={formData.name}
-          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-          className="w-full mb-4 p-2 border rounded"
-        />
-        <input
-          type="email"
-          placeholder="Email"
-          value={formData.email}
-          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-          className="w-full mb-4 p-2 border rounded"
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={formData.password}
-          onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-          className="w-full mb-4 p-2 border rounded"
-        />
-        <button type="submit" className="w-full bg-green-600 text-white p-2 rounded">
-          Register
-        </button>
-      </form>
+    <div className="min-h-screen bg-[#F5F5F5] flex justify-center px-6 pt-16">
+      <div className="w-full max-w-sm">
+
+        {/* Heading */}
+        <h1 className="text-4xl font-bold text-[#005792] mb-2">
+          Create Account
+        </h1>
+        <p className="text-[#005792] text-xl mb-12">
+          Create your new account
+        </p>
+
+        {/* Form */}
+        <form onSubmit={handleSubmit}>
+          <input
+            type="text"
+            placeholder="Full Name"
+            value={formData.name}
+            onChange={function (e) {
+              setFormData({ ...formData, name: e.target.value });
+            }}
+            className="w-full mb-6 p-4 rounded-xl border border-[#D9D9D9] bg-white text-lg"
+            required
+          />
+
+          <input
+            type="email"
+            placeholder="Email address"
+            value={formData.email}
+            onChange={function (e) {
+              setFormData({ ...formData, email: e.target.value });
+            }}
+            className="w-full mb-6 p-4 rounded-xl border border-[#D9D9D9] bg-white text-lg"
+            required
+          />
+
+          <input
+            type="password"
+            placeholder="Password"
+            value={formData.password}
+            onChange={function (e) {
+              setFormData({ ...formData, password: e.target.value });
+            }}
+            className="w-full mb-6 p-4 rounded-xl border border-[#D9D9D9] bg-white text-lg"
+            required
+          />
+
+          <input
+            type="password"
+            placeholder="Confirm Password"
+            value={formData.confirmPassword}
+            onChange={function (e) {
+              setFormData({ ...formData, confirmPassword: e.target.value });
+            }}
+            className="w-full mb-10 p-4 rounded-xl border border-[#D9D9D9] bg-white text-lg"
+            required
+          />
+
+          <button
+            type="submit"
+            className="w-full bg-[#005792] text-white py-4 rounded-full text-xl font-semibold shadow"
+          >
+            Create Account
+          </button>
+        </form>
+
+        {/* Login link */}
+        <p className="text-center text-lg mt-8">
+          Already have an account?{' '}
+          <Link to="/login" className="text-[#005792] font-medium">
+            Log In →
+          </Link>
+        </p>
+
+      </div>
     </div>
   );
 };
