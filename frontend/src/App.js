@@ -6,6 +6,8 @@ import Profile from './pages/Profile';
 import Devices from './pages/Tasks';
 import AddDevice from './pages/AddDevice';
 import EditDevice from './pages/EditDevice';
+import Dashboard from './pages/Dashboard';
+import Alerts from './pages/Alerts';
 
 function App() {
   return (
@@ -17,8 +19,10 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/devices" element={<Devices />} />
+        <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/devices/new" element={<AddDevice />} />
         <Route path="/devices/edit/:id" element={<EditDevice />} />
+        <Route path="/alerts" element={<Alerts />} />
       </Routes>
     </Router>
   );
