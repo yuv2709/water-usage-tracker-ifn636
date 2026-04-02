@@ -3,7 +3,7 @@ import Navbar from './components/Navbar';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Profile from './pages/Profile';
-import Tasks from './pages/Tasks';
+import Devices from './pages/Tasks';
 import AddDevice from './pages/AddDevice';
 import EditDevice from './pages/EditDevice';
 
@@ -16,7 +16,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/profile" element={<Profile />} />
-        <Route path="/devices" element={<Tasks />} />
+        <Route path="/devices" element={<Devices />} />
         <Route path="/devices/new" element={<AddDevice />} />
         <Route path="/devices/edit/:id" element={<EditDevice />} />
       </Routes>
