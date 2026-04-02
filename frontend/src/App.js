@@ -7,6 +7,7 @@ import Tasks from './pages/Tasks';
 import AddDevice from './pages/AddDevice';
 import EditDevice from './pages/EditDevice';
 import Dashboard from './pages/Dashboard';
+import Alerts from './pages/Alerts';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <Route path="/devices" element={<Tasks />} />
         <Route path="/devices/new" element={<AddDevice />} />
         <Route path="/devices/edit/:id" element={<EditDevice />} />
+        <Route path="/alerts" element={<Alerts />} />
       </Routes>
     </Router>
   );
