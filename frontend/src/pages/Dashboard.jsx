@@ -24,6 +24,7 @@ const Dashboard = () => {
         });
         setDevices(response.data);
       } catch (error) {
+        console.log('Devices error:', error.response?.data || error.message);
         alert('Failed to load devices.');
       }
     };
@@ -52,6 +53,7 @@ const Dashboard = () => {
           weeklyUsage: response.data.weeklyUsage || [0, 0, 0, 0, 0, 0, 0],
         });
       } catch (error) {
+        console.log('USAGE ERROR:', error.response?.status, error.response?.data, error.message);
         alert('Failed to load usage data.');
       } finally {
         setLoading(false);
