@@ -1,7 +1,8 @@
+import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import axiosInstance from '../axiosConfig';
 
-const TaskList = ({ devices, setDevices, setEditingDevice }) => {
+const TaskList = ({ devices, setDevices }) => {
   const { user } = useAuth();
 
   const handleDelete = async function (deviceId) {
@@ -32,17 +33,15 @@ const TaskList = ({ devices, setDevices, setEditingDevice }) => {
               <p><strong>Device ID:</strong> {device.deviceId}</p>
               <p><strong>Location:</strong> {device.location}</p>
               <p><strong>Status:</strong> {device.status}</p>
-              <p><strong>Daily Threshold:</strong> {device.dailyThreshold} L</p>
+              <p><strong>Daily Threshold:</strong> {device.dailyThreshold} L/day</p>
 
               <div className="mt-2">
-                <button
-                  onClick={function () {
-                    setEditingDevice(device);
-                  }}
-                  className="mr-2 bg-yellow-500 text-white px-4 py-2 rounded"
+                <Link
+                  to={`/devices/edit/${device._id}`}
+                  className="inline-block mr-2 bg-yellow-500 text-white px-4 py-2 rounded"
                 >
-                  Edit
-                </button>
+                  Update
+                </Link>
 
                 <button
                   onClick={function () {
