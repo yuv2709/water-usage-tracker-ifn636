@@ -11,41 +11,46 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-blue-700 text-white p-4 flex justify-between items-center">
-      <Link to={user ? '/devices' : '/login'} className="text-2xl font-bold">
+    <nav className="bg-[#005792] text-white px-6 py-4 flex justify-between items-center">
+      {/* Logo */}
+      <Link to={user ? '/dashboard' : '/login'} className="text-2xl font-bold">
         AquaTrack
       </Link>
 
-      <div>
-        {user ? (
-          <>
-            <Link to="/devices" className="mr-4">
-              My Devices
-            </Link>
-            <Link to="/profile" className="mr-4">
-              Profile
-            </Link>
-            <button
-              onClick={handleLogout}
-              className="bg-red-500 px-4 py-2 rounded hover:bg-red-700"
-            >
-              Logout
-            </button>
-          </>
-        ) : (
-          <>
-            <Link to="/login" className="mr-4">
-              Login
-            </Link>
-            <Link
-              to="/register"
-              className="bg-green-500 px-4 py-2 rounded hover:bg-green-700"
-            >
-              Register
-            </Link>
-          </>
-        )}
-      </div>
+      {/* Desktop Navigation */}
+      {user ? (
+        <div className="hidden md:flex items-center gap-6">
+          <Link to="/dashboard" className="hover:underline">
+            Dashboard
+          </Link>
+          <Link to="/devices" className="hover:underline">
+            Devices
+          </Link>
+          <Link to="/alerts" className="hover:underline">
+            Alerts
+          </Link>
+          <Link to="/profile" className="hover:underline">
+            Profile
+          </Link>
+
+          <button
+            onClick={handleLogout}
+            className="bg-red-500 px-4 py-2 rounded hover:bg-red-700"
+          >
+            Logout
+          </button>
+        </div>
+      ) : (
+        <div className="hidden md:flex items-center gap-4">
+          <Link to="/login">Login</Link>
+          <Link
+            to="/register"
+            className="bg-green-500 px-4 py-2 rounded hover:bg-green-700"
+          >
+            Register
+          </Link>
+        </div>
+      )}
     </nav>
   );
 };
