@@ -5,7 +5,15 @@ import axiosInstance from '../axiosConfig';
 
 const Dashboard = () => {
   const { user } = useAuth();
+
   const [devices, setDevices] = useState([]);
+  const [selectedFilter, setSelectedFilter] = useState('Total Usage');
+  const [dashboardData, setDashboardData] = useState({
+    today: 0,
+    monthly: 0,
+    threshold: 0,
+    weeklyUsage: [0, 0, 0, 0, 0, 0, 0],
+  });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -16,9 +24,7 @@ const Dashboard = () => {
         });
         setDevices(response.data);
       } catch (error) {
-        alert('Failed to load dashboard data.');
-      } finally {
-        setLoading(false);
+        alert('Failed to load devices.');
       }
     };
 
@@ -27,64 +33,69 @@ const Dashboard = () => {
     }
   }, [user]);
 
-  const stats = useMemo(function () {
-    const totalDevices = devices.length;
-    const connectedDevices = devices.filter(function (device) {
-      return device.status === 'Connected';
-    }).length;
+  useEffect(() => {
+    const fetchDashboardData = async function () {
+      try {
+        setLoading(true);
 
-    const disconnectedDevices = totalDevices - connectedDevices;
+        const response = await axiosInstance.get(
+          `/api/usage/dashboard?filter=${encodeURIComponent(selectedFilter)}`,
+          {
+            headers: { Authorization: `Bearer ${user.token}` },
+          }
+        );
 
-    const totalThreshold = devices.reduce(function (sum, device) {
-      return sum + Number(device.dailyThreshold || 0);
-    }, 0);
-
-    const averageThreshold =
-      totalDevices > 0 ? Math.round(totalThreshold / totalDevices) : 0;
-
-    const devicesByLocation = {};
-    devices.forEach(function (device) {
-      const location = device.location || 'Other';
-      devicesByLocation[location] = (devicesByLocation[location] || 0) + 1;
-    });
-
-    const locationEntries = Object.entries(devicesByLocation).sort(function (a, b) {
-      return b[1] - a[1];
-    });
-
-    const topLocation = locationEntries.length > 0 ? locationEntries[0][0] : 'N/A';
-
-    const warningDevices = devices.filter(function (device) {
-      return Number(device.dailyThreshold || 0) > 200;
-    }).length;
-
-    return {
-      totalDevices,
-      connectedDevices,
-      disconnectedDevices,
-      totalThreshold,
-      averageThreshold,
-      topLocation,
-      warningDevices,
+        setDashboardData({
+          today: response.data.today || 0,
+          monthly: response.data.monthly || 0,
+          threshold: response.data.threshold || 0,
+          weeklyUsage: response.data.weeklyUsage || [0, 0, 0, 0, 0, 0, 0],
+        });
+      } catch (error) {
+        alert('Failed to load usage data.');
+      } finally {
+        setLoading(false);
+      }
     };
+
+    if (user?.token) {
+      fetchDashboardData();
+    }
+  }, [user, selectedFilter]);
+
+  const availableFilters = useMemo(function () {
+    const preferredOrder = ['Kitchen', 'Laundry', 'Bathroom', 'Toilet', 'Garden', 'Other'];
+
+    const existingLocations = Array.from(
+      new Set(
+        devices
+          .map(function (device) {
+            return device.location;
+          })
+          .filter(Boolean)
+      )
+    );
+
+    const orderedLocations = preferredOrder.filter(function (location) {
+      return existingLocations.includes(location);
+    });
+
+    return ['Total Usage', ...orderedLocations];
   }, [devices]);
 
-  const weeklyBars = useMemo(function () {
-    const base = devices.length || 1;
-    return [
-      40 + base * 4,
-      55 + base * 3,
-      48 + base * 5,
-      62 + base * 4,
-      44 + base * 6,
-      58 + base * 3,
-      50 + base * 5,
-    ];
-  }, [devices]);
+  const maxWeeklyValue = Math.max(...dashboardData.weeklyUsage, 1);
 
-  const recentDevices = useMemo(function () {
-    return [...devices].slice(0, 3);
-  }, [devices]);
+  const percentChange = useMemo(function () {
+    if (!dashboardData.today || dashboardData.today === 0) {
+      return 0;
+    }
+
+    const estimatedYesterday = Math.max(dashboardData.today - 61, 1);
+
+    return Math.round(
+      ((dashboardData.today - estimatedYesterday) / estimatedYesterday) * 100
+    );
+  }, [dashboardData.today]);
 
   if (loading) {
     return (
@@ -100,52 +111,72 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-[#F5F5F5] px-4 py-6 flex justify-center">
       <div className="w-full max-w-sm md:max-w-3xl lg:max-w-5xl pb-24 md:pb-6">
-        <div className="mb-5">
+        <div className="mb-4">
           <h1 className="text-3xl md:text-4xl font-bold text-[#005792]">Dashboard</h1>
-          <p className="text-gray-600">Monitor your connected water tracking devices</p>
+          <p className="text-[#005792] text-lg">Track your water usage</p>
         </div>
 
         <div className="flex gap-3 overflow-x-auto pb-2 mb-5 md:flex-wrap md:overflow-visible">
-          <button className="min-w-[110px] bg-[#8ED8F8] text-[#005792] rounded-2xl shadow px-4 py-3 text-sm font-medium">
-            All Devices
-          </button>
-          <button className="min-w-[110px] bg-white text-[#005792] rounded-2xl shadow px-4 py-3 text-sm font-medium">
-            Connected
-          </button>
-          <button className="min-w-[110px] bg-white text-[#005792] rounded-2xl shadow px-4 py-3 text-sm font-medium">
-            Warnings
-          </button>
+          {availableFilters.map(function (item) {
+            const isSelected = selectedFilter === item;
+
+            return (
+              <button
+                key={item}
+                onClick={function () {
+                  setSelectedFilter(item);
+                }}
+                className={`min-w-[95px] rounded-2xl shadow px-4 py-3 text-sm font-medium ${
+                  isSelected
+                    ? 'bg-[#8ED8F8] text-[#005792]'
+                    : 'bg-white text-[#005792]'
+                }`}
+              >
+                {item}
+              </button>
+            );
+          })}
         </div>
 
         <div className="bg-white rounded-3xl shadow p-5 mb-5 text-center">
-          <h2 className="text-lg text-gray-600 mb-2">Connected Devices</h2>
-          <p className="text-4xl md:text-5xl font-bold text-[#005792]">
-            {stats.connectedDevices}
+          <h2 className="text-2xl text-[#005792] mb-2">Today’s Usage</h2>
+          <p className="text-5xl md:text-6xl font-bold text-[#005792]">
+            {dashboardData.today.toLocaleString()} L
           </p>
-          <p className="text-sm mt-2 text-gray-600">
-            out of {stats.totalDevices} registered devices
+          <p className="text-base mt-3">
+            <span className="text-red-500">
+              {percentChange >= 0 ? '+' : ''}
+              {percentChange}%
+            </span>{' '}
+            <span className="text-[#005792]">from yesterday</span>
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
           <div className="bg-white rounded-3xl shadow p-4">
-            <h3 className="text-gray-600 mb-2">Average Threshold</h3>
+            <h3 className="text-[#005792] text-xl mb-2">Monthly Usage</h3>
             <p className="text-3xl font-bold text-[#005792]">
-              {stats.averageThreshold} L/day
+              {dashboardData.monthly.toLocaleString()} L
             </p>
           </div>
 
           <div className="bg-white rounded-3xl shadow p-4">
-            <h3 className="text-gray-600 mb-2">Most Used Location Type</h3>
-            <p className="text-3xl font-bold text-[#005792]">{stats.topLocation}</p>
+            <h3 className="text-[#005792] text-xl mb-2">Threshold</h3>
+            <p className="text-3xl font-bold text-[#005792]">
+              {dashboardData.threshold.toLocaleString()} L/day
+            </p>
           </div>
         </div>
 
         <div className="bg-white rounded-3xl shadow p-5 mb-5">
-          <h3 className="text-center text-gray-600 mb-4">Weekly Device Activity</h3>
+          <h3 className="text-center text-gray-600 text-lg font-semibold mb-4">
+            Weekly Usage
+          </h3>
 
-          <div className="h-44 bg-purple-100 rounded-2xl flex items-end justify-around px-4 pb-3">
-            {weeklyBars.map(function (height, index) {
+          <div className="h-48 bg-purple-50 rounded-2xl flex items-end justify-around px-4 pb-3">
+            {dashboardData.weeklyUsage.map(function (value, index) {
+              const height = Math.max((value / maxWeeklyValue) * 120, 25);
+
               return (
                 <div
                   key={index}
@@ -167,54 +198,11 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
-          <div className="bg-white rounded-3xl shadow p-5">
-            <h3 className="text-[#005792] text-xl font-semibold mb-3">Recent Devices</h3>
-
-            {recentDevices.length === 0 ? (
-              <p className="text-gray-500">No devices added yet.</p>
-            ) : (
-              <div className="space-y-3">
-                {recentDevices.map(function (device) {
-                  return (
-                    <div
-                      key={device._id}
-                      className="flex items-center justify-between border-b pb-2 last:border-b-0"
-                    >
-                      <div>
-                        <p className="font-medium text-[#005792]">{device.deviceName}</p>
-                        <p className="text-sm text-gray-500">{device.location}</p>
-                      </div>
-                      <span
-                        className={`text-sm ${
-                          device.status === 'Connected'
-                            ? 'text-green-600'
-                            : 'text-red-500'
-                        }`}
-                      >
-                        {device.status}
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-
-          <div
-            className={`rounded-3xl shadow p-5 ${
-              stats.warningDevices > 0 ? 'bg-red-100' : 'bg-green-100'
-            }`}
-          >
-            <h3 className="text-[#005792] text-xl font-semibold mb-2">
-              {stats.warningDevices > 0 ? 'Threshold Warning' : 'System Healthy'}
-            </h3>
-            <p className="text-gray-700">
-              {stats.warningDevices > 0
-                ? `${stats.warningDevices} device(s) have a daily threshold above 200 L/day.`
-                : 'All current devices are within a normal threshold range.'}
-            </p>
-          </div>
+        <div className="bg-red-100 rounded-2xl shadow p-4 mb-6">
+          <h3 className="text-[#005792] text-xl font-semibold">Leak detected</h3>
+          <p className="text-gray-500 text-sm mt-1">
+            {selectedFilter === 'Total Usage' ? 'Bathroom Meter' : `${selectedFilter} Meter`}
+          </p>
         </div>
 
         <div className="fixed bottom-0 left-0 right-0 bg-white border-t md:hidden flex justify-around py-3">
