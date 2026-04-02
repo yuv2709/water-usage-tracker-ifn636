@@ -6,33 +6,40 @@ import { useAuth } from '../context/AuthContext';
 
 const Tasks = () => {
   const { user } = useAuth();
-  const [tasks, setTasks] = useState([]);
-  const [editingTask, setEditingTask] = useState(null);
+  const [devices, setDevices] = useState([]);
+  const [editingDevice, setEditingDevice] = useState(null);
 
   useEffect(() => {
-    const fetchTasks = async () => {
+    const fetchDevices = async () => {
       try {
-        const response = await axiosInstance.get('/api/tasks', {
+        const response = await axiosInstance.get('/api/devices', {
           headers: { Authorization: `Bearer ${user.token}` },
         });
-        setTasks(response.data);
+        setDevices(response.data);
       } catch (error) {
-        alert('Failed to fetch tasks.');
+        alert('Failed to fetch devices.');
       }
     };
 
-    fetchTasks();
+    fetchDevices();
   }, [user]);
 
   return (
     <div className="container mx-auto p-6">
+      <h2 className="text-2xl font-bold mb-4">My Devices</h2>
+
       <TaskForm
-        tasks={tasks}
-        setTasks={setTasks}
-        editingTask={editingTask}
-        setEditingTask={setEditingTask}
+        devices={devices}
+        setDevices={setDevices}
+        editingDevice={editingDevice}
+        setEditingDevice={setEditingDevice}
       />
-      <TaskList tasks={tasks} setTasks={setTasks} setEditingTask={setEditingTask} />
+
+      <TaskList
+        devices={devices}
+        setDevices={setDevices}
+        setEditingDevice={setEditingDevice}
+      />
     </div>
   );
 };
