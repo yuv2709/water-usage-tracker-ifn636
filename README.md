@@ -1,23 +1,205 @@
-**Assessment 1.2 (Total Marks **20**)**
+# AquaTrack – Water Usage Monitoring System
 
-Assignment: **Software requirements analysis and design (**Full-Stack CRUD Application Development with DevOps Practices**)**
-
----
-
-**Objective**
-
-For this assessment, you have already been assigned a project. Your task is to develop a system that implements CRUD (Create, Read, Update, Delete) operations based on the selected project. The system should include both a user panel and an admin panel. Depending on the nature of your chosen project, you may decide how many CRUD operations are required to support the functionality of the system. You have been provided with a starter project that includes user authentication using Node.js, React.js, and MongoDB, your should extend this application based on your assigned project requirements. Ensure that the implemented features are appropriate and meaningful for your selected project. Your project should include the following:
-In this assignment you will complete the following tasks:
-
-- **Basic Version Control using GitHub**
-- **Development, CI/CD Integration for Automated Deployment**
-- **Project report**
+AquaTrack is a full-stack MERN application developed as part of IFN636 Assessment 1.2.  
+The system allows users to monitor water usage across different devices, analyse consumption patterns, and manage their devices efficiently.
 
 ---
 
-**GitHub link of the starter project: **[https://github.com/nahaQUT/sampleapp_IFQ636.git](https://github.com/nahaQUT/sampleapp_IFQ636.git)
+## 🚀 Features
+
+### 🔐 Authentication
+
+- User registration and login using JWT
+- Secure authentication with protected routes
+
+### 📟 Device Management (CRUD)
+
+- Add new water monitoring devices
+- View all registered devices
+- Update device details
+- Delete devices
+- Automatic generation of water usage data per device
+
+### 📊 Dashboard
+
+- Displays:
+  - Daily water usage
+  - Monthly water usage
+  - Total threshold
+- Weekly usage visualization
+- Filter by device location
+
+### 🔔 Alerts
+
+- Displays alerts based on usage and thresholds
+
+### 👤 Profile
+
+- View and update user information
+- Logout functionality
 
 ---
 
-//change
-//testing CI CD Pipeline
+## 🛠️ Tech Stack
+
+### Frontend
+
+- React.js
+- Tailwind CSS
+
+### Backend
+
+- Node.js
+- Express.js
+- MongoDB (Mongoose)
+
+### DevOps & Tools
+
+- GitHub (Version Control)
+- GitHub Actions (CI/CD)
+- AWS EC2 (Deployment)
+- PM2 (Process Manager)
+- Nginx (Reverse Proxy)
+
+---
+
+## 📂 Project Structure
+
+sampleapp_IFQ636/
+│
+├── backend/
+│ ├── controllers/
+│ ├── models/
+│ ├── routes/
+│ ├── middleware/
+│ ├── config/
+│ └── test/
+│
+├── frontend/
+│ ├── src/
+│ └── public/
+│
+└── .github/workflows/
+
+---
+
+## ⚙️ Setup Instructions
+
+### 1. Clone Repository
+
+```bash
+git clone https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git
+cd sampleapp_IFQ636
+```
+
+### 2. Install Dependencies
+
+```bash
+npm run install-all
+```
+
+### 3. Configure Environment Variables
+
+Create a .env file inside backend:
+
+```bash
+MONGO_URI=your_mongodb_connection_string
+JWT_SECRET=your_secret_key
+PORT=5001
+```
+
+### 4. Run Application Locally
+
+```bash
+npm run dev
+```
+
+Frontend: http://localhost:3000
+Backend: http://localhost:5001
+
+## 🧪 Testing
+
+Backend testing is implemented using:
+
+Mocha
+Chai
+Sinon
+
+```bash
+cd backend
+npm test
+```
+
+Test cases cover:
+
+Device creation logic
+Error handling scenarios
+
+## 🔄 CI/CD Pipeline
+
+A CI/CD pipeline is implemented using GitHub Actions.
+
+Workflow includes:
+Installing backend and frontend dependencies
+Running backend unit tests
+Building frontend application
+Deploying updates to AWS EC2
+Trigger:
+Push to main branch
+Pull Requests
+
+This ensures automated testing and deployment for every update.
+
+## 🌐 Deployment
+
+The application is deployed on AWS EC2 using:
+
+PM2 for backend process management
+Nginx as a reverse proxy server
+🔗 Public URL:
+
+## 🔐 Test Credentials
+
+Use the following credentials to access the application:
+
+## 🧠 System Design
+
+RESTful API architecture
+MVC pattern in backend
+Component-based architecture in React
+Separation of frontend and backend
+Simulated IoT data generation for water usage
+
+## 📌 Version Control Strategy
+
+main → production-ready code
+Feature branches:
+feature/dashboard
+feature/device-ui
+feature/profile-ui
+feature/water-usage-backend
+Pull Requests used for merging features into main
+
+## 📷 Screenshots
+
+Screenshots demonstrating:
+
+CRUD operations
+Dashboard functionality
+CI/CD pipeline
+Deployment status
+
+(Provided in report submission)
+
+## 📚 References
+
+https://nodejs.org/
+https://react.dev/
+https://www.mongodb.com/
+https://docs.github.com/actions
+https://aws.amazon.com/ec2/
+https://pm2.keymetrics.io/
+
+## 👨‍💻 Author
+
+Yuvraj Sachdeva
