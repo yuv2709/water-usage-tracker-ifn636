@@ -63,7 +63,7 @@ The system allows users to monitor water usage across different devices, analyse
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 
 sampleapp_IFQ636/
 │
@@ -83,13 +83,12 @@ sampleapp_IFQ636/
 
 ---
 
-## ⚙️ Setup Instructions
+## Setup Instructions
 
 ### 1. Clone Repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git
-cd sampleapp_IFQ636
+git clone https://github.com/yuv2709/water-usage-tracker-ifn636.git
 ```
 
 ### 2. Install Dependencies
@@ -117,7 +116,41 @@ npm run dev
 Frontend: http://localhost:3000
 Backend: http://localhost:5001
 
-## 🧪 Testing
+## Running the Deployed Application
+
+The application is deployed on an AWS EC2 instance.
+
+### Accessing the Application
+
+The application can be accessed using the EC2 public IP:
+http://<public_ip_address>
+
+### Important Note on IP Address
+
+The EC2 instance uses a dynamic public IP address. This means:
+
+- If the instance is **stopped and restarted**, the public IP may change.
+- When the IP changes, the application URL will also change accordingly.
+
+### How to Access After IP Change
+
+If the application is not accessible:
+
+1. Go to AWS Console → EC2 → Instances
+2. Select the running instance
+3. Copy the **new Public IPv4 address**
+4. Use the updated URL: http://<new_public_ip_address>
+
+### Backend Availability
+
+The backend server is managed using **PM2**, which ensures:
+
+- The backend automatically starts when the instance boots
+- No manual intervention is required after restart
+
+---
+
+## Testing
 
 Backend testing is implemented using:
 
@@ -135,7 +168,7 @@ Test cases cover:
 Device creation logic
 Error handling scenarios
 
-## 🔄 CI/CD Pipeline
+## CI/CD Pipeline
 
 A CI/CD pipeline is implemented using GitHub Actions.
 
@@ -146,31 +179,35 @@ Building frontend application
 Deploying updates to AWS EC2
 Trigger:
 Push to main branch
-Pull Requests
+Pull requests
 
 This ensures automated testing and deployment for every update.
 
-## 🌐 Deployment
+## Deployment
 
 The application is deployed on AWS EC2 using:
 
 PM2 for backend process management
 Nginx as a reverse proxy server
-🔗 Public URL:
+Public URL:
+http://<public_ip_address>
 
-## 🔐 Test Credentials
+## Test Credentials
 
 Use the following credentials to access the application:
 
-## 🧠 System Design
+```bash
+email: y@gmail.com
+password:12345678
+```
 
-RESTful API architecture
-MVC pattern in backend
+## System Design
+
 Component-based architecture in React
 Separation of frontend and backend
 Simulated IoT data generation for water usage
 
-## 📌 Version Control Strategy
+## Version Control Strategy
 
 main → production-ready code
 Feature branches:
@@ -180,7 +217,7 @@ feature/profile-ui
 feature/water-usage-backend
 Pull Requests used for merging features into main
 
-## 📷 Screenshots
+## Screenshots
 
 Screenshots demonstrating:
 
@@ -191,15 +228,6 @@ Deployment status
 
 (Provided in report submission)
 
-## 📚 References
-
-https://nodejs.org/
-https://react.dev/
-https://www.mongodb.com/
-https://docs.github.com/actions
-https://aws.amazon.com/ec2/
-https://pm2.keymetrics.io/
-
-## 👨‍💻 Author
+## Author
 
 Yuvraj Sachdeva
